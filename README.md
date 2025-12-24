@@ -24,7 +24,20 @@ Running / developer workflows (examples)
 
 # Spatial Pyramid Matching (SPM) + Baselines
 
-This repository implements a classical object recognition pipeline based on **SIFT + Bag of Visual Words (BoVW) + Spatial Pyramid Matching (SPM)**, together with simple deep-learning baselines (**VGG16, ResNet50**). Datasets are expected in a single **folder-of-classes** format under `data/dataset_name/` (e.g., `data/dataset_name/class_x/*.jpg`), with **no on-disk train/val/test split**; all splits are handled internally and deterministically. The main SPM implementation is in `spm2.py` (recommended), with a lightweight runner in `spm.py`; results (accuracy, macro-F1, precision, recall) and confusion matrices are saved under `save_<dataset_name>/`. Utilities include `collect_results.py` for CSV aggregation and `plot_class_distribution.py` for class-count tables and plots. Requirements include Python 3.10+, `numpy`, `opencv-python` or `opencv-contrib-python` (SIFT), `scikit-learn`, `matplotlib`, and `tqdm` (optional: `torch`, `torchvision` for baselines). Larger vocabularies and deeper pyramids increase memory usage; fix seeds for reproducibility. Reference: Lazebnik et al., *CVPR 2006*.
+# Spatial Pyramid Matching (SPM) + Baselines
+
+- **Purpose:** Classical object recognition using **SIFT + Bag of Visual Words (BoVW) + Spatial Pyramid Matching (SPM)**, with simple deep-learning baselines (**VGG16, ResNet50**).
+- **Dataset format:** Single **folder-of-classes** under `data/dataset_name/` (e.g., `class_x/*.jpg`); **no on-disk train/val/test split**.
+- **Splitting:** Performed **internally and deterministically** by the code.
+- **Main pipeline:** `spm2.py` (recommended) implements SIFT extraction, BoVW encoding, and multi-level SPM.
+- **Lightweight runner:** `spm.py` provides a compact end-to-end experiment with a small config block.
+- **Outputs:** Accuracy, macro-F1, precision, recall, and confusion matrices saved under `save_<dataset_name>/`.
+- **Utilities:** `collect_results.py` aggregates metrics into CSV; `plot_class_distribution.py` produces class-count tables and plots.
+- **Deep baselines:** `vgg_classifier.py` (VGG16) and `resnet.py` (ResNet50) reuse the same internal splitting logic and run on CPU by default.
+- **Requirements:** Python 3.10+, `numpy`, `opencv-python` or `opencv-contrib-python` (SIFT), `scikit-learn`, `matplotlib`, `tqdm` (optional: `torch`, `torchvision`).
+- **Notes:** Larger vocabularies (`M`) and deeper pyramids (`L`) increase memory usage; fix seeds for reproducibility.
+- **Reference:** Lazebnik et al., *Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene Categories*, CVPR 2006.
+
  
 
 HOG pipeline
