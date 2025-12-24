@@ -9,7 +9,7 @@ Key files and roles
 - `BoVW/test.py`: script for running inference on images in `data/test`; writes `test.txt` and `catalog_k_{k}_test.pkl`.
 - `BoVW/kNN_model.py`: distance calculation and majority voting used by all scripts. (FROM SCRATCH)
 - `BoVW/kmeans.py`:  K-means clustering algorithm from scratch, including random initialization of cluster centers, iterative assignment and update steps until convergence
-
+- `BoVW/dt_model.py`: Decision Tree classifier implementation from scratch
 
 
 Running / developer workflows (examples)
