@@ -1,4 +1,4 @@
-# Copilot / AI agent instructions — Object_Recognition_Pipelines
+#Object_Recognition_Pipelines
 
 Overview
 - This repository contains lightweight Bag-of-Visual-Words (BoVW) experiments under the `BoVW/` folder. The core flow: local descriptors (SIFT / dense SIFT) -> k-means visual dictionary -> per-image histograms (catalog) -> k-NN classification.
@@ -20,3 +20,13 @@ Running / developer workflows (examples)
 
   python BoVW/test.py
 
+HOG pipeline
+- `HOG/main.py`: HOG feature extraction + classifier training with hyperparameter search; uses `data/<dataset>` layout with train/validation/test splits.
+- Run with default dataset from `HOG/config.py`:
+
+  python HOG/main.py
+
+- Run with a specific dataset name under `data/` or a full path:
+
+  python HOG/main.py --dataset dataset1
+  python HOG/main.py --dataset /path/to/dataset_root
