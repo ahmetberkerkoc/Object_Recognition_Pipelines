@@ -22,9 +22,6 @@ Running / developer workflows (examples)
 
 
 
-# Spatial Pyramid Matching (SPM) + Baselines
-
-# Spatial Pyramid Matching (SPM) + Baselines
 
 # Spatial Pyramid Matching (SPM) + Baselines
 
