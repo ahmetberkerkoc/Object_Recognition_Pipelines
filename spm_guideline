@@ -1,0 +1,170 @@
+# Spm (Spatial Pyramid Matching + baselines)
+
+This folder contains a classical CV pipeline based on **Dense SIFT + Bag of Visual Words + Spatial Pyramid Matching (SPM)**, plus a couple of simple deep-learning baselines (VGG / ResNet) that reuse the same dataset splitting logic.
+
+The code was used with Caltech-101 style folder datasets:
+
+- `dataset1/` and `dataset2/` (folder-of-classes)
+- optionally exported splits: `dataset1_split/` and `dataset2_split/`
+
+## Requirements
+
+Typical environment:
+
+- Python 3.10+ (older may work)
+- `numpy`, `opencv-python` (SIFT), `scikit-learn`, `matplotlib`, `tqdm`
+- Optional for baselines: `torch`, `torchvision`
+
+Notes:
+
+- OpenCV SIFT availability depends on your OpenCV build; if `cv2.SIFT_create()` is missing you may need `opencv-contrib-python`.
+- Some scripts are CPU-only by design (see `vgg_classifier.py` / `resnet.py`).
+
+## Dataset layout
+
+### Folder-of-classes format
+
+```
+dataset2/
+	airplanes/
+		image_0001.jpg
+		...
+	yin_yang/
+		...
+```
+
+Hidden files (like `.DS_Store`) are ignored.
+
+### Exported split format
+
+If you call `CustomDataset.xy(..., save_split_dir="dataset2_split")`, it creates:
+
+```
+dataset2_split/
+	train/<class>/*.jpg
+	val/<class>/*.jpg
+	test/<class>/*.jpg
+```
+
+## Key scripts
+
+### 1) Splitting / Dataset utility (`data.py`)
+
+`CustomDataset` loads a folder-of-classes dataset and can produce a deterministic per-class split.
+
+- Ratios default to 60/20/20 via `split=(0.6, 0.2, 0.2)`
+- You can disable shuffling (split-by-order) with:
+	- `shuffle_images_in_class=False`
+	- `shuffle_indices=False`
+
+Example (also saves split folders):
+
+```bash
+python3 data.py
+```
+
+This script currently uses `root = "dataset2"` and writes `dataset2_split/`.
+
+### 2) SPM pipeline (recommended): `spm2.py`
+
+`spm2.py` contains `SpatialPyramidClassifier` and supports training + evaluation.
+
+Outputs:
+
+- Score files: `val_scores_*.json`, `test_scores_*.json`
+	- The file contains **two JSON blocks**:
+		- `Class scores:` per-class `{precision, recall, f1, support}`
+		- `Overall scores:` includes `accuracy`, `macro_f1`, `macro_precision`, `macro_recall` (and some weighted metrics)
+- Confusion matrix PNG saved in the run directory.
+	- Axes show indices (not class names), and y-axis shows supports as `i (n=<support>)`.
+
+Run (from this folder):
+
+```bash
+python3 spm2.py
+```
+
+Where results go:
+
+- Under `save_dataset1/` or `save_dataset2/` (depending on your `spm2.py` configuration).
+
+### 3) Simple SPM experiment runner: `spm.py`
+
+`spm.py` is a smaller end-to-end experiment runner with a `cfg` dict at the top.
+It saves a `results.json` and confusion matrices in a per-run folder (under `cfg["save_root"]`).
+
+Run:
+
+```bash
+python3 spm.py
+```
+
+### 4) Collect results into a CSV: `collect_results.py`
+
+This script traverses run folders and extracts the **Overall scores** block from `val_scores_*.json` and `test_scores_*.json`.
+
+Current output columns focus on:
+
+- `accuracy`
+- `macro_f1`
+- `macro_precision`
+- `macro_recall`
+
+Run:
+
+```bash
+python3 collect_results.py
+```
+
+> Note: `base_dir` is currently hard-coded inside the script. Change it to point to your run root, e.g. `save_dataset1/...`.
+
+### 5) Class distribution pie plot + table: `plot_class_distribution.py`
+
+Creates a CSV table of class counts (plus totals) and pie charts.
+
+Two modes:
+
+- From a split directory:
+
+```bash
+python3 plot_class_distribution.py --split_dir dataset2_split --out_dir save/class_dist_dataset2
+```
+
+- From a raw dataset root:
+
+```bash
+python3 plot_class_distribution.py --dataset_root dataset2 --out_dir save/class_dist_dataset2_all
+```
+
+Notes:
+
+- It labels outputs as **Dataset 1** / **Dataset 2** when the input folder starts with `dataset1...` / `dataset2...`.
+- Use `--max_classes N` to keep only the top-N classes and merge the remainder into `other`.
+
+### 6) Deep learning baselines
+
+- `vgg_classifier.py`: VGG16 fine-tuning head on the dataset from `data.py`
+- `resnet.py`: ResNet50 fine-tuning head on the dataset from `data.py`
+
+Both scripts:
+
+- load via `CustomDataset.xy(...)`
+- convert grayscale to 3 channels
+- force CPU device
+
+Run:
+
+```bash
+python3 vgg_classifier.py
+python3 resnet.py
+```
+
+## Tips / common issues
+
+- **`.DS_Store` / hidden files**: already filtered in `CustomDataset`.
+- **Memory**: Increasing `M` (vocab size) and `L` (pyramid level) can be very memory-heavy.
+- **Determinism**: keep shuffles disabled and set a fixed seed.
+
+## Reference
+
+[1] S. Lazebnik, C. Schmid and J. Ponce, “Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene Categories,” CVPR 2006.
