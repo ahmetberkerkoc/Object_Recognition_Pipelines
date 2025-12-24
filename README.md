@@ -26,6 +26,8 @@ Running / developer workflows (examples)
 
 # Spatial Pyramid Matching (SPM) + Baselines
 
+# Spatial Pyramid Matching (SPM) + Baselines
+
 - **Purpose:** Classical object recognition using **SIFT + Bag of Visual Words (BoVW) + Spatial Pyramid Matching (SPM)**, with simple deep-learning baselines (**VGG16, ResNet50**).
 - **Dataset format:** Single **folder-of-classes** under `data/dataset_name/` (e.g., `class_x/*.jpg`); **no on-disk train/val/test split**.
 - **Splitting:** Performed **internally and deterministically** by the code.
@@ -36,7 +38,10 @@ Running / developer workflows (examples)
 - **Deep baselines:** `vgg_classifier.py` (VGG16) and `resnet.py` (ResNet50) reuse the same internal splitting logic and run on CPU by default.
 - **Requirements:** Python 3.10+, `numpy`, `opencv-python` or `opencv-contrib-python` (SIFT), `scikit-learn`, `matplotlib`, `tqdm` (optional: `torch`, `torchvision`).
 - **Notes:** Larger vocabularies (`M`) and deeper pyramids (`L`) increase memory usage; fix seeds for reproducibility.
+- **Acknowledgment:** The implementation and structure of the repository  
+  **https://github.com/MercuriXito/Spm** were helpful in guiding the development of our own SPM and dataset-handling code.
 - **Reference:** Lazebnik et al., *Beyond Bags of Features: Spatial Pyramid Matching for Recognizing Natural Scene Categories*, CVPR 2006.
+
 
  
 
