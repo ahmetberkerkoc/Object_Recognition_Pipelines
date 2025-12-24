@@ -193,6 +193,62 @@ class vision_dictionary:
             )  # load clusters r:rading b:binary mode
             catalog = pickle.load(open("catalog_k_{}_test.pkl".format(kmeans_k), "rb"))
 
+    def GO_SVM(catalog_test):
+        from sklearn import svm
+
+        acc = 0
+        catalog_train = pickle.load(open("catalog_k_{}_probably.pkl".format(k_for_kmeans), "rb"))
+        X_train = []
+        y_train = []
+        for i in range(len(catalog_train)):
+            X_train.append(catalog_train[i].hist)
+            y_train.append(catalog_train[i].category)
+
+        clf = svm.SVC(gamma="scale")
+        clf.fit(X_train, y_train)
+
+        X_test = []
+        y_test = []
+        for i in range(len(catalog_test)):
+            X_test.append(catalog_test[i].hist)
+            y_test.append(catalog_test[i].category)
+
+        y_pred = clf.predict(X_test)
+
+        for i in range(len(y_test)):
+            if y_pred[i] == y_test[i]:
+                acc += 1
+        accuracy = acc / len(catalog_test)
+        return accuracy
+
+    def GO_DECISION_TREE(catalog_test, k_for_kmeans):
+        from sklearn import tree
+
+        acc = 0
+        catalog_train = pickle.load(open("catalog_k_{}_probably.pkl".format(k_for_kmeans), "rb"))
+        X_train = []
+        y_train = []
+        for i in range(len(catalog_train)):
+            X_train.append(catalog_train[i].hist)
+            y_train.append(catalog_train[i].category)
+
+        clf = tree.DecisionTreeClassifier()
+        clf = clf.fit(X_train, y_train)
+
+        X_test = []
+        y_test = []
+        for i in range(len(catalog_test)):
+            X_test.append(catalog_test[i].hist)
+            y_test.append(catalog_test[i].category)
+
+        y_pred = clf.predict(X_test)
+
+        for i in range(len(y_test)):
+            if y_pred[i] == y_test[i]:
+                acc += 1
+        accuracy = acc / len(catalog_test)
+        return accuracy
+
     def GO_KNN(catalog_test, K_for_KNN, k_for_kmeans):
 
         acc = 0
