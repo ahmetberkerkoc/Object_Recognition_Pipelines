@@ -8,6 +8,7 @@ Key files and roles
 - `BoVW/parameter_search_caltech.py`: variant that expects a `./caltech-101/` folder (train/validation split done by file list). Produces `resultsdeep_c101.txt` and `*_deep_c101.pkl` artifacts.
 - `BoVW/test.py`: script for running inference on images in `data/test`; writes `test.txt` and `catalog_k_{k}_test.pkl`.
 - `BoVW/kNN_model.py`: distance calculation and majority voting used by all scripts. (FROM SCRATCH)
+- `BoVW/kmeans.py`:  K-means clustering algorithm from scratch, including random initialization of cluster centers, iterative assignment and update steps until convergence
 
 
 

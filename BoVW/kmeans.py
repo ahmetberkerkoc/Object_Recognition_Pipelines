@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 
 def initialize_clusters(data, k):
@@ -56,6 +55,16 @@ def visualize(cluster_centers, assignments, data_new, k, orig_shape):
     return data_new
 
 
-def calculate_error(error):
-    error_np = np.array([math.sqrt(i) / 221850 for i in error])
-    return error_np
+def knn_run(data_orig, k):
+
+    data = data_orig.reshape((-1, data_orig.shape[-1]))
+    initial_cluster_centers = initialize_clusters(data, k)
+    resultant_cluster_centers, obj = kmeans(data, initial_cluster_centers)
+
+    category = assign_clusters(data, resultant_cluster_centers)
+
+    data_new = np.zeros_like(data)
+
+    data_new = visualize(resultant_cluster_centers, category, data_new, k, data_orig.shape)
+
+    return category
